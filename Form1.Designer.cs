@@ -50,6 +50,8 @@ namespace Agenda2
             this.buttonModificaSite = new System.Windows.Forms.Button();
             this.buttonStergeSite = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonImportFromChrome = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.buttonOpenFormExport = new System.Windows.Forms.Button();
             this.txtCategorieCriteriu2 = new System.Windows.Forms.TextBox();
             this.txtDenSiteNoteCriteriu1 = new System.Windows.Forms.TextBox();
@@ -69,6 +71,8 @@ namespace Agenda2
             this.label3 = new System.Windows.Forms.Label();
             this.labelPagina2 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.btnGoPage = new System.Windows.Forms.Button();
+            this.txtPage = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -302,6 +306,8 @@ namespace Agenda2
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.BackColor = System.Drawing.Color.DarkSeaGreen;
+            this.groupBox2.Controls.Add(this.buttonImportFromChrome);
+            this.groupBox2.Controls.Add(this.button1);
             this.groupBox2.Controls.Add(this.buttonOpenFormExport);
             this.groupBox2.Controls.Add(this.txtCategorieCriteriu2);
             this.groupBox2.Controls.Add(this.txtDenSiteNoteCriteriu1);
@@ -320,6 +326,29 @@ namespace Agenda2
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Cauta site (criterii de cautare)";
+            // 
+            // buttonImportFromChrome
+            // 
+            this.buttonImportFromChrome.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.buttonImportFromChrome.ForeColor = System.Drawing.Color.ForestGreen;
+            this.buttonImportFromChrome.Location = new System.Drawing.Point(1459, 98);
+            this.buttonImportFromChrome.Name = "buttonImportFromChrome";
+            this.buttonImportFromChrome.Size = new System.Drawing.Size(190, 62);
+            this.buttonImportFromChrome.TabIndex = 28;
+            this.buttonImportFromChrome.Text = "Importa from Chrome";
+            this.buttonImportFromChrome.UseVisualStyleBackColor = true;
+            this.buttonImportFromChrome.Click += new System.EventHandler(this.buttonImportFromChrome_Click);
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.button1.Location = new System.Drawing.Point(1211, 98);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(242, 59);
+            this.button1.TabIndex = 27;
+            this.button1.Text = "Site-uri neimportate";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // buttonOpenFormExport
             // 
@@ -518,6 +547,8 @@ namespace Agenda2
             this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.BackColor = System.Drawing.Color.DarkSeaGreen;
+            this.groupBox4.Controls.Add(this.btnGoPage);
+            this.groupBox4.Controls.Add(this.txtPage);
             this.groupBox4.Controls.Add(this.buttonAnterior);
             this.groupBox4.Controls.Add(this.buttonUrmator);
             this.groupBox4.Controls.Add(this.labelPagina2);
@@ -530,6 +561,24 @@ namespace Agenda2
             this.groupBox4.TabIndex = 18;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Pagini lista site-uri ";
+            // 
+            // btnGoPage
+            // 
+            this.btnGoPage.Location = new System.Drawing.Point(1029, 31);
+            this.btnGoPage.Name = "btnGoPage";
+            this.btnGoPage.Size = new System.Drawing.Size(112, 34);
+            this.btnGoPage.TabIndex = 18;
+            this.btnGoPage.Text = "Go Page";
+            this.btnGoPage.UseVisualStyleBackColor = true;
+            this.btnGoPage.Click += new System.EventHandler(this.btnGoPage_Click);
+            // 
+            // txtPage
+            // 
+            this.txtPage.Location = new System.Drawing.Point(838, 33);
+            this.txtPage.Name = "txtPage";
+            this.txtPage.Size = new System.Drawing.Size(150, 31);
+            this.txtPage.TabIndex = 1;
+            this.txtPage.TextChanged += new System.EventHandler(this.txtPage_TextChanged);
             // 
             // Form1
             // 
@@ -604,6 +653,10 @@ namespace Agenda2
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonOpenFormExport;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonImportFromChrome;
+        private System.Windows.Forms.Button btnGoPage;
+        private System.Windows.Forms.TextBox txtPage;
     }
 }
 

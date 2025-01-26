@@ -8,6 +8,8 @@ using System.Data.SQLite;
 //using System.Text;
 //using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;//new
+using Newtonsoft.Json.Linq;//new
 
 namespace Agenda2
 {
@@ -263,6 +265,62 @@ namespace Agenda2
 
         }
 
+
+        private Boolean verify_exista_deja_denumirea_siteului_for_import(string denumire1)//pentru adauga prin import
+        {
+            SQLiteDataAdapter DB1;
+            DataSet DS1 = new DataSet();
+            DataTable DT1 = new DataTable();
+
+            command.CommandText = "select count(*) as nrrows FROM site " +
+                    " where denumire = @criteriuDenumire";
+
+            command.Parameters.Clear();
+
+            string criteriuDenumire = denumire1.Trim().ToString();
+            //string criteriuSite = site1.Trim().ToString();
+            command.Parameters.AddWithValue("criteriuDenumire", criteriuDenumire);
+            //command.Parameters.AddWithValue("criteriuSite", criteriuSite);
+
+
+            DB1 = new SQLiteDataAdapter(command);// (CommandText, connection);
+            DS1.Reset();
+            DB1.Fill(DS1);
+            DT1 = DS1.Tables[0];
+            double nrrows = Convert.ToDouble(DT1.Rows[0].ItemArray[0]);// 2;
+            if (nrrows > 0) return false; //nu se poate sterge
+            return true;
+            // if (DT1.Rows.Count > 0) { dataGridView1.DataSource = DT1; }
+
+        }
+
+        public Boolean verify_exista_deja_siteul_siteului_for_import(string site1)//pentru adauga prin import
+        {
+            SQLiteDataAdapter DB1;
+            DataSet DS1 = new DataSet();
+            DataTable DT1 = new DataTable();
+
+            command.CommandText = "select count(*) as nrrows FROM site " +
+                    " where site = @criteriuSite";
+
+            command.Parameters.Clear();
+
+            //string criteriuDenumire = denumire1.Trim().ToString();
+            string criteriuSite = site1.Trim().ToString();
+            //command.Parameters.AddWithValue("criteriuDenumire", criteriuDenumire);
+            command.Parameters.AddWithValue("criteriuSite", criteriuSite);
+
+
+            DB1 = new SQLiteDataAdapter(command);// (CommandText, connection);
+            DS1.Reset();
+            DB1.Fill(DS1);
+            DT1 = DS1.Tables[0];
+            double nrrows = Convert.ToDouble(DT1.Rows[0].ItemArray[0]);// 2;
+            if (nrrows > 0) return false; //nu se poate sterge
+            return true;
+            // if (DT1.Rows.Count > 0) { dataGridView1.DataSource = DT1; }
+
+        }
         private Boolean verify_exista_deja_siteul_for_modify(string denumire1, string site1, Int64 idSite1)//pentru modifica
         {
             SQLiteDataAdapter DB1;
@@ -687,5 +745,198 @@ namespace Agenda2
             f3.Show();
            // this.Close();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //open form 4
+            Form4 f4 = new Form4(this);
+            f4.Show();
+
+        }
+
+        private void add_site_imported_from_chrome(String denumire, String site, String cale)
+        {
+            // Boolean b = true;
+            
+            if (
+               (string.IsNullOrEmpty(denumire.Trim().ToString())) ||
+               (string.IsNullOrEmpty(site.Trim().ToString())) 
+              // (string.IsNullOrEmpty(txtCategorie.Text.Trim().ToString()))
+               )
+            {
+                //MessageBox.Show("Nu ati completat denumirea sau site-ul noului site importat! Mai completati o data campurile inainte de a apasa butonul Adauga!");
+                //  b = false;
+                return;
+            }
+
+            if (!verify_exista_deja_siteul_siteului_for_import(site.Trim().ToString()))
+            {
+               // MessageBox.Show("Exista deja un site care are aceasta denumire sau aceasta adresa url(site)! Nu puteti adauga site-ul nou!");
+                //b = false;
+                return;
+            }
+            // denumire = denumire.ToString().Replace("'", "");
+            string vers_denumire = denumire.Trim().ToString();
+            int nrvers = 2;
+            while (!verify_exista_deja_denumirea_siteului_for_import(vers_denumire))
+            {
+                // MessageBox.Show("Exista deja un site care are aceasta denumire sau aceasta adresa url(site)! Nu puteti adauga site-ul nou!");
+                //b = false;
+                // return;
+                nrvers++;
+                vers_denumire = denumire + " v." + nrvers.ToString();
+                if (nrvers >= 100)
+                {
+                    break;
+                 }
+            }
+            denumire = vers_denumire;
+            //b==true
+            String categorie = "import Google Chrome";
+            if (verificaCategoria(categorie) == false)
+            {
+                //MessageBox.Show("Nu exista categoria " + categorie + " in baza de date! Nu am adaugat site-ul nou!");
+                return;
+            }
+            // else 
+            //pas1. verifica ca nu exista un site cu denumirea sau site-ul nou --- inca nu am facut
+            //pas2. insert efectiv
+            
+            String note = "cale Google Chrome: " + cale;
+            command.CommandText = //"insert into site (denumire, site, categorie, note) values ('"
+                                  //  + denumire + "','" + site + "','" +
+                                  //    categorie + "','" + note + "'" +
+                                  //   ")";
+
+                                   "insert into site (denumire, site, categorie, note) values (@critDenumire, @critSite, @critCategorie, @critNote)";
+            try
+            {
+                command.Parameters.AddWithValue("critDenumire",denumire);
+                command.Parameters.AddWithValue("critSite", site);
+                command.Parameters.AddWithValue("critCategorie", categorie);
+                command.Parameters.AddWithValue("critNote", note);
+
+
+                command.ExecuteNonQuery();
+                //MessageBox.Show("Am adaugat site-ul nou in baza de date!");
+                /*try
+                {
+                    Int64 nrpag  = 1;
+
+                    updateDataBinding(nrpag, txtCriteriuDenNote.Text, txtCriteriuCategorie.Text);
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message.ToString()); }
+                */
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.Message.ToString());
+            }
+        }
+
+        private void buttonImportFromChrome_Click(object sender, EventArgs e)
+        {
+            openConnection();
+            LoadBookmarksNew();
+            closeConnection();
+        }
+        private void LoadBookmarksNew()
+        {
+            try
+            {
+                // Calea către folderul de profil Chrome al utilizatorului
+                string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string chromeBookmarksPath = Path.Combine(userProfile, "AppData", "Local", "Google", "Chrome", "User Data", "Default", "Bookmarks");
+
+                if (!File.Exists(chromeBookmarksPath))
+                {
+                    MessageBox.Show("Fișierul de marcaje Google Chrome nu a fost găsit.");
+                    return;
+                }
+
+                // Citește fișierul JSON al marcajelor
+                string bookmarksJson = File.ReadAllText(chromeBookmarksPath);
+
+                // Parsează JSON-ul
+                JObject bookmarksData = JObject.Parse(bookmarksJson);
+
+                var roots = bookmarksData["roots"];
+
+                // Procesează toate secțiunile principale: bookmark_bar, other și mobile
+                ProcessFolder(roots["bookmark_bar"], "Bookmark Bar", "");
+                ProcessFolder(roots["other"], "Other Bookmarks", "");
+                ProcessFolder(roots["synced"], "Mobile Bookmarks", "");
+
+                MessageBox.Show("Importul din Chrome s-a finalizat cu succes!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"A apărut o eroare: {ex.Message}");
+            }
+        }
+
+        private void ProcessFolder(JToken folder, string folderName, string cale)
+        {
+            if (folder == null) return;
+
+            // Adaugă titlul folderului în ListBox
+            //listBoxBookmarks.Items.Add($"--- {folderName} ---");
+            String myfolderName = $"{folderName}";
+            // Procesează conținutul folderului
+            var children = folder["children"];
+            if (children != null)
+            {
+                foreach (var child in children)
+                {
+                    string type = child["type"]?.ToString();
+
+                    if (type == "folder")
+                    {
+                        // Dacă este un folder, procesează-l recursiv
+                        string subFolderName = child["name"]?.ToString() ?? "Folder fără nume";
+                        //cale = cale + '/' + myfolderName;//atentie foreach ; nu trebuie facut asa; 
+                        ProcessFolder(child, subFolderName, cale + '/' + myfolderName);
+                    }
+                    else if (type == "url")
+                    {
+                        // Dacă este un marcaj, adaugă-l la ListBox
+                        string name = child["name"]?.ToString();
+                        string url = child["url"]?.ToString();
+
+                        //listBoxBookmarks.Items.Add($"{name}: {url}");
+                        //cale = cale + '/' + myfolderName;//atentie foreach  nu trebuie facut asa; 
+
+                        add_site_imported_from_chrome(name, url, cale + '/' + myfolderName);
+                        
+                        //return;
+                    }
+                }
+            }
+        }
+
+        private void txtPage_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnGoPage_Click(object sender, EventArgs e)
+        {
+            openConnection();
+            try
+            {
+                Int64 nrpag /*de afisat*/ = Convert.ToInt64(txtPage.Text);
+                
+                //updateDataBinding(nrpag, txtCriteriuDenNote.Text, txtCriteriuCategorie.Text);
+                updateDataBinding(nrpag, txtDenSiteNoteCriteriu1.Text, txtCategorieCriteriu2.Text);
+            }
+            catch (Exception ex) { MessageBox.Show("Eroare la schimbarea paginii!"); }
+            finally
+            {
+                closeConnection();
+                txtPage.Text = "";
+            }
+        }
     }
 }
+
+
